@@ -16,8 +16,10 @@ __pycache__/
 # No subimos los archivos subidos por los usuarios
 media/
 
-# Archivos de configuración local (si los tuvieras)
-.env
+
 
 # Archivos del OS (macOS)
 .DS_Store
+
+# Archivos de configuración local (si los tuvieras)
+.env

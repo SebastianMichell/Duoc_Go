@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-import dj_database_url
+from dotenv import load_dotenv
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -13,11 +13,10 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True         
 
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = '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' # La que generaste
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 DEFAULT_FROM_EMAIL = 'jexfryxd@gmail.com' # Tu remitente verificado
 EMAIL_TIMEOUT = 30
-
 
 
 
@@ -25,15 +24,15 @@ EMAIL_TIMEOUT = 30
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+load_dotenv()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-p#tdfz6*o@kn5nj^oc1=@y5zxx%i7$$p-=s_urpa*-ma17v*#('
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 #ALLOWED_HOSTS = []
 
 
