@@ -1,0 +1,23 @@
+# Entorno virtual de Python
+.venv/
+venv/
+env/
+
+# Archivos de la base de datos de SQLite
+*.sqlite3
+db.sqlite3
+db_secondary.sqlite3
+
+# Archivos de caché de Python
+__pycache__/
+*.pyc
+
+# Archivos Media (Tus QR y Carrusel)
+# No subimos los archivos subidos por los usuarios
+media/
+
+# Archivos de configuración local (si los tuvieras)
+.env
+
+# Archivos del OS (macOS)
+.DS_Store

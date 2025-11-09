@@ -1,0 +1,36 @@
+{% extends 'base.html' %} 
+
+{% block title %}Orden Confirmada{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="text-success mb-4">✅ Solicitud de Retiro Aceptada</h1>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            {% if orden %}
+                <div class="card p-4 shadow-lg mb-4">
+                    <h3 class="mb-3">Tu Número de Orden para Retiro:</h3>
+                    <p class="display-4 text-primary fw-bold">{{ orden.numero_orden }}</p>
+                    <p class="lead">Hora de Retiro Solicitada: <strong>{{ orden.hora_retiro }}</strong></p>
+                    
+                    <div class="mt-4">
+                        <h4>Muestra este Código QR en el Local:</h4>
+                        {% if orden.qr_code %}
+                            <img src="{{ orden.qr_code.url }}" alt="Código QR de la orden {{ orden.numero_orden }}" class="img-fluid border p-3" style="max-width: 250px;">
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <a href="{% url 'home' %}" class="btn btn-primary btn-lg mt-3">Volver al Menú Principal</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

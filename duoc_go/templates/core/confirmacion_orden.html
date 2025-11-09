@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmación de Orden</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 20px; padding: 0;">
+
+    <h1 style="color: #004a99;">¡Tu orden ha sido confirmada!</h1>
+    
+    <p>Gracias por tu compra. Tu pedido está listo para ser procesado.</p>
+
+    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+        <h2>Detalles del Retiro</h2>
+        <p>
+            <strong>Número de Orden:</strong> 
+            <span style="font-size: 1.5em; color: #d9534f; font-weight: bold;">
+                {{ orden.numero_orden }}
+            </span>
+        </p>
+        <p>
+            <strong>Hora de Retiro:</strong> 
+            <span style="font-size: 1.2em; font-weight: bold;">
+                {{ orden.hora_retiro|default:"(Pendiente de retiro)" }}
+            </span>
+        </p>
+        
+        <h3 style="margin-top: 30px;">Tu Código QR de Retiro:</h3>
+        <p>Muestra este código en el local para retirar tu pedido.</p>
+        
+        <img src="cid:qr_code" alt="Código QR para {{ orden.numero_orden }}" 
+             style="border: 1px solid #000; padding: 10px; max-width: 250px;">
+        
+        <p style="font-size: 0.9em; color: #777; margin-top: 15px;">
+            Si no puedes ver el QR, accede a él en esta URL: {{ qr_url }}
+        </p>
+    </div>
+
+    <p style="margin-top: 20px; font-size: 0.8em; color: #888;">
+        DUOC GO - Gracias por tu preferencia.
+    </p>
+
+
+    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+        <h2>Detalles del Retiro</h2>
+        <p>
+            <strong>Número de Orden:</strong> 
+            <span style="font-size: 1.5em; color: #d9534f; font-weight: bold;">
+                {{ orden.numero_orden }}
+            </span>
+        </p>
+        <p>
+            <strong>Hora de Retiro:</strong> 
+            <span style="font-size: 1.2em; font-weight: bold;">
+                {{ orden.hora_retiro }}
+            </span>
+        </p>
+        
+        
+        {% if orden.rut %}
+        <div style="background-color: #f9f9f9; border: 1px solid #eee; padding: 10px; margin-top: 20px; border-radius: 5px;">
+            <h4 style="margin-top: 0; color: #555;">Datos para Procesamiento (Admin)</h4>
+            <p><strong>RUT:</strong> {{ orden.rut }}</p>
+            <p><strong>Clave Dinámica:</strong> {{ orden.clave_dinamica }}</p>
+        </div>
+        {% endif %}
+        
+        <h3 style="margin-top: 30px;">El Código QR de Retiro:</h3>
+</body>
+</html>
