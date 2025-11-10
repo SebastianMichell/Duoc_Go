@@ -182,4 +182,4 @@ DATABASES = {
 }
 
 # 3. Router (ya deberías tenerlo)
-DATABASE_ROUTERS = ['core.dbrouters.ProductRouter']
+DATABASE_ROUTERS = ['duoc_go.dbrouters.ProductRouter']
