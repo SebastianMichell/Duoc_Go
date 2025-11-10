@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
