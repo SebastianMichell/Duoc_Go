@@ -311,16 +311,16 @@ def enviar_correo_confirmacion(request, orden):
     email.attach_alternative(html_message, "text/html")
 
     # 5. Adjuntar la imagen QR
-    try:
-        # Abrimos la imagen QR que guardamos en el modelo
-        with open(orden.qr_code.path, 'rb') as f:
-            qr_image = MIMEImage(f.read())
-            # 'qr_code' debe coincidir con el 'cid:qr_code' en el HTML
-            qr_image.add_header('Content-ID', '<qr_code>') 
-            qr_image.add_header('Content-Disposition', 'inline')
-            email.attach(qr_image)
-    except Exception as e:
-        print(f"Error al adjuntar QR al correo: {e}")
+    # try:
+    #     # Abrimos la imagen QR que guardamos en el modelo
+    #     with open(orden.qr_code.path, 'rb') as f:
+    #         qr_image = MIMEImage(f.read())
+    #         # 'qr_code' debe coincidir con el 'cid:qr_code' en el HTML
+    #         qr_image.add_header('Content-ID', '<qr_code>') 
+    #         qr_image.add_header('Content-Disposition', 'inline')
+    #         email.attach(qr_image)
+    # except Exception as e:
+    #     print(f"Error al adjuntar QR al correo: {e}")
         # El correo se enviará sin el QR adjunto si falla la lectura
 
     # 6. Enviar (a la consola, si settings está en 'console')
