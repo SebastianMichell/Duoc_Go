@@ -111,8 +111,6 @@ USE_TZ = True
 
 # --- 9. Archivos Estáticos (CSS, JS) y Media (Uploads) ---
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # Configuración de WHITENOISE (para producción)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
