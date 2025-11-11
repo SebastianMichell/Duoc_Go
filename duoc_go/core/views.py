@@ -375,12 +375,12 @@ def pago_junaeb(request):
             nueva_orden.qr_code.save(file_name, ContentFile(buffer.getvalue()), save=True)
             
             # --- 3. ENVIAR CORREO (CON QR) ---
-            # try:
-            #     enviar_correo_confirmacion(request, nueva_orden)
-            #     messages.success(request, f"Datos de pago Junaeb enviados. Revisa tu correo.")
+            try:
+                enviar_correo_confirmacion(request, nueva_orden)
+                messages.success(request, f"Datos de pago Junaeb enviados. Revisa tu correo.")
                 
-            # except Exception as e:
-            #     messages.error(request, f"Error al enviar el correo. Detalle: {e}. La orden N° {nueva_orden.numero_orden} ha sido guardada.")
+            except Exception as e:
+                messages.error(request, f"Error al enviar el correo. Detalle: {e}. La orden N° {nueva_orden.numero_orden} ha sido guardada.")
             
             # --- 4. REDIRECCIÓN DE ÉXITO ---
             request.session['carrito'] = []
