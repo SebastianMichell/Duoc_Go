@@ -120,15 +120,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- 10. Configuración de Email (Usando la API de SendGrid, no SMTP) ---
 
-
-EMAIL_BACKEND = "sendgrid_backend.SendGridBackend"
-
-SENDGRID_API_KEY = os.environ.get('EMAIL_HOST_PASSWORD')
-
-
-DEFAULT_FROM_EMAIL = 'jexfryxd@gmail.com' 
-
-SENDGRID_ECHO_TO_STDOUT = True
+# --- 10. Configuración de Email (SendGrid) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = 'jexfryxd@gmail.com'
+EMAIL_TIMEOUT = 90
 
 # --- 11. Otros ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
