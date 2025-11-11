@@ -136,3 +136,4 @@ TAILWIND_APP_NAME = "theme"
 # --- 12. Configuración de Cloudinary (para Archivos MEDIA) ---
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
