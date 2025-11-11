@@ -21,3 +21,6 @@ transbank-sdk==6.1.0
 typing_extensions==4.15.0
 urllib3==2.5.0
 whitenoise==6.11.0
+gunicorn==22.0.0
+
+
