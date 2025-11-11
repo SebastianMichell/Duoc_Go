@@ -51,7 +51,8 @@
     {% for p in productos %}
     <div class="col-sm-6 col-md-4 col-lg-3">
       <div class="card shadow-sm h-100">
-        <img src="{{ p.imagen }}" class="card-img-top" alt="{{ p.nombre }}" style="height: 180px; object-fit: cover;">
+        <img src="{{ producto.image.url }}" class="card-img-top" alt="{{ p.nombre }}" style="height: 180px; object-fit: cover;">
+        
 
         <div class="card-body d-flex flex-column justify-content-between">
           <div>
