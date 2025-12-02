@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load formato_chileno %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}Inicio - DuocGo{% endblock %}
+
+{% block content %}
+
+<style>
+    .carousel-inner {
+        height: 500px; 
+    }
+
+    .carousel-img-custom {
+        width: 100%;
+        height: 100%; 
+        object-fit: fill; 
+    }
+    @media (max-width: 768px) {
+        .carousel-inner {
+            height: 250px; 
+        }
+    }
+</style>
+
+<div class="container-fluid p-0 mb-5">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for item in carrusel_items %}
+                <div class="carousel-item h-100 {% if forloop.first %}active{% endif %}">
+                    
+                    {% if item.tipo_link == 'producto' and item.producto_id > 0 %}
+                        <a href="{% url 'detalle_producto' item.local_id item.producto_id %}">
+                    {% else %}
+                        <a href="{% url 'ver_local' item.local_id %}">
+                    {% endif %}
+                    
+                        <img src="{{ item.imagen.url }}" class="d-block carousel-img-custom" alt="{{ item.titulo }}">
+                        {% if item.titulo %}
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+                            <h5>{{ item.titulo }}</h5>
+                            <p>{{ item.subtitulo }}</p>
+                        </div>
+                        {% endif %}
+                        
+                    </a>
+                </div>
+            {% empty %}
+                <div class="carousel-item active h-100">
+                    <div class="d-flex align-items-center justify-content-center bg-secondary text-white h-100">
+                        <h3>¡Bienvenido a DuocGo!</h3>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="mb-5">
+        <h3 class="fw-bold mb-4 section-title">Tiendas</h3>
+        <div class="row g-4 justify-content-center">
+            
+            <div class="col-6 col-md-3">
+                <a href="{% url 'ver_local' 'a' %}" class="text-decoration-none text-center d-block hover-scale">
+                    <div class="rounded-4 shadow-sm mx-auto mb-3 overflow-hidden" style="width: 120px; height: 120px;">
+                        {% if perfil_a and perfil_a.logo %}
+                            <img src="{{ perfil_a.logo.url }}" alt="Local 1" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-primary text-white w-100 h-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-shop fs-1"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h5 class="fw-bold text-dark mb-0">{% if perfil_a %}{{ perfil_a.nombre_local }}{% else %}Local 1{% endif %}</h5>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <a href="{% url 'ver_local' 'b' %}" class="text-decoration-none text-center d-block hover-scale">
+                    <div class="rounded-4 shadow-sm mx-auto mb-3 overflow-hidden" style="width: 120px; height: 120px;">
+                        {% if perfil_b and perfil_b.logo %}
+                            <img src="{{ perfil_b.logo.url }}" alt="Local 2" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-danger text-white w-100 h-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-cup-hot fs-1"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h5 class="fw-bold text-dark mb-0">{% if perfil_b %}{{ perfil_b.nombre_local }}{% else %}Local 2{% endif %}</h5>
+                </a>
+            </div>
+
+    {% if ofertas %}
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-4">
+            <h3 class="fw-bold mb-0 section-title text-danger" style="border-color: #dc3545;">Ofertas Relámpago</h3>
+            <span class="badge bg-danger ms-3 px-3 py-2 rounded-pill">¡Descuentos!</span>
+        </div>
+        <div class="row g-4">
+            {% for p in ofertas %}
+            <div class="col-sm-6 col-md-3">
+                {% include 'core/card_producto.html' with p=p %} 
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mb-5">
+        <h3 class="fw-bold mb-4 section-title">Recién Llegados</h3>
+        <div class="row g-4">
+            {% for p in nuevos %}
+            <div class="col-sm-6 col-md-3">
+               {% include 'core/card_producto.html' with p=p %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0 section-title">Todo el Catálogo</h3>
+            </div>
+        <div class="row g-4">
+            {% for p in productos %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                {% include 'core/card_producto.html' with p=p %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

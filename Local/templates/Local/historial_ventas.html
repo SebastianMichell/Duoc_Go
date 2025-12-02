@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load formato_chileno %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Historial Completo de Ventas</h2>
+        <a href="{% url 'local:panel' %}" class="btn btn-secondary"><i class="bi bi-arrow-left me-2"></i> Volver al Panel</a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Desde:</label>
+                    <input type="date" name="fecha_inicio" class="form-control" value="{{ fecha_inicio|default:'' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Hasta:</label>
+                    <input type="date" name="fecha_fin" class="form-control" value="{{ fecha_fin|default:'' }}">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar por Fechas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Fecha</th>
+                            <th>N° Orden</th>
+                            <th>Producto Vendido</th>
+                            <th>Método Pago</th>
+                            <th class="text-end pe-4">Total Venta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td class="ps-4">
+                                {{ item.fecha|date:"d F Y" }} <br>
+                                <small class="text-muted">{{ item.fecha|date:"H:i" }} hrs</small>
+                            </td>
+                            <td class="fw-bold">#{{ item.orden_id }}</td>
+                            <td>{{ item.nombre }}</td>
+                            <td>
+                                {% if item.tipo == 'Junaeb' %}
+                                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Junaeb</span>
+                                {% else %}
+                                    <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill">Webpay</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4 fw-bold text-success fs-5">
+                                ${{ item.precio_total|clp }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                No se encontraron ventas en este periodo.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

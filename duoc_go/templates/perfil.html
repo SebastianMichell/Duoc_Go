@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}Mi Perfil - DuocGo{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row g-4">
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center p-4">
+                <div class="mb-3">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                        {{ user.username|make_list|first|upper }}
+                    </div>
+                </div>
+                <h4 class="fw-bold">{{ user.username }}</h4>
+                <p class="text-muted mb-1">{{ user.email }}</p>
+                {% if user.rut %}
+                    <span class="badge bg-light text-dark border">{{ user.rut }}</span>
+                {% endif %}
+                
+                <hr class="my-4">
+                
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i> Editar Datos</a>
+                    <a href="#" class="btn btn-outline-secondary"><i class="bi bi-gear"></i> Configuración</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i> Historial de Pedidos</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="ps-4">N° Orden</th>
+                                    <th scope="col">Fecha</th>
+                                    <th scope="col">Pago</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for orden in historial %}
+                                <tr>
+                                    <td class="ps-4 fw-bold">#{{ orden.numero_orden }}</td>
+                                    <td>
+                                        {{ orden.fecha_creacion|date:"d M Y" }}<br>
+                                        <small class="text-muted">{{ orden.fecha_creacion|date:"H:i" }} hrs</small>
+                                    </td>
+                                    <td>
+                                        {% if orden.tipo_pago == 'Junaeb' %}
+                                            <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Junaeb</span>
+                                        {% else %}
+                                            <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill">Webpay</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold">${{ orden.total|intcomma }}</td>
+                                    <td>
+                                        {% if orden.estado == 'PENDIENTE' %}
+                                            <span class="badge bg-warning text-dark">Pendiente</span>
+                                        {% elif orden.estado == 'RETIRADO' %}
+                                            <span class="badge bg-success">Retirado</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ orden.estado }}</span>
+                                        {% endif %}
+                                    </td>
+                                  <td class="text-end pe-4">
+                                      {% if orden.qr_code %}
+                                          <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#qrModal{{ orden.numero_orden }}">
+                                              <i class="bi bi-qr-code"></i> Ver QR
+                                          </button>
+
+                                          <div class="modal fade" id="qrModal{{ orden.numero_orden }}" tabindex="-1" aria-hidden="true">
+                                              <div class="modal-dialog modal-dialog-centered">
+                                                  <div class="modal-content shadow">
+                                                      
+                                                      <div class="modal-header bg-light border-0">
+                                                          <h5 class="modal-title fw-bold text-dark">
+                                                              <i class="bi bi-phone me-2"></i>Código de Retiro
+                                                          </h5>
+                                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                      </div>
+
+                                                      <div class="modal-body text-center p-4">
+                                                          <p class="text-muted mb-2">Orden <span class="fw-bold text-dark">#{{ orden.numero_orden }}</span></p>
+                                                          
+                                                          <div class="p-2 border rounded d-inline-block bg-white mb-3 shadow-sm">
+                                                              <img src="{{ orden.qr_code.url }}" class="img-fluid" alt="Código QR" style="max-width: 220px; height: auto;">
+                                                          </div>
+
+                                                          <div class="mt-2">
+                                                              <p class="mb-0 text-muted small text-uppercase fw-bold">Hora de Retiro</p>
+                                                              <h2 class="text-danger fw-bold display-6">
+                                                                  {{ orden.hora_retiro }}
+                                                              </h2>
+                                                          </div>
+                                                          
+                                                          <p class="small text-muted mt-3 mb-0">
+                                                              Muestra este código al vendedor para recibir tu pedido.
+                                                          </p>
+                                                      </div>
+                                                      
+                                                      <div class="modal-footer border-0 justify-content-center pb-4">
+                                                          <a href="{{ orden.qr_code.url }}" download="QR_DuocGo_{{ orden.numero_orden }}.png" class="btn btn-primary btn-sm rounded-pill px-4">
+                                                              <i class="bi bi-download me-2"></i> Descargar Imagen
+                                                          </a>
+                                                      </div>
+
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          {% endif %}
+                                  </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="bi bi-bag-x fs-1 d-block mb-3"></i>
+                                        Aún no has realizado compras.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

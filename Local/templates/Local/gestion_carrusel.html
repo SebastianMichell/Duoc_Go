@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Gestión de Carrusel (Promociones)</h2>
+        <a href="{% url 'local:panel' %}" class="btn btn-secondary">Volver al Panel</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning-subtle fw-bold">
+                    <i class="bi bi-plus-circle"></i> Nueva Promoción
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Subir Promo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="row g-3">
+                {% for promo in promos %}
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ promo.imagen.url }}" class="card-img-top" style="height: 150px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ promo.titulo }}</h5>
+                            <p class="card-text small text-muted">{{ promo.subtitulo }}</p>
+                            <span class="badge bg-info text-dark">{{ promo.get_tipo_link_display }}</span>
+                            {% if promo.tipo_link == 'producto' %}
+                                <span class="badge bg-secondary">ID: {{ promo.producto_id }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="{% url 'local:eliminar_promo' promo.pk %}" class="btn btn-danger btn-sm w-100" onclick="return confirm('¿Borrar esta promo?')">Eliminar</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5 text-muted">
+                    No tienes promociones activas en el carrusel.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

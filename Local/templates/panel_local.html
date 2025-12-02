@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    
+    <h1 class="h3 mb-4 fw-bold">
+        Panel de Control: <span class="text-primary">{{ local_nombre }}</span>
+    </h1>
+    
+    <!-- Fila de Estadísticas (Sin cambios) -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 border-start border-success border-5">
+                <div class="card-body">
+                    <h5 class="card-title text-success text-uppercase small mb-1">Venta Total (Completadas)</h5>
+                    <div class="h4 fw-bold mb-0">${{ ganancias_totales|floatformat:0 }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 border-start border-warning border-5">
+                <div class="card-body">
+                    <h5 class="card-title text-warning text-uppercase small mb-1">Productos Vendidos (Unidades)</h5>
+                    <div class="h4 fw-bold mb-0">{{ productos_vendidos_totales }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 border-start border-info border-5">
+                <div class="card-body">
+                    <h5 class="card-title text-info text-uppercase small mb-1">Productos Distintos (Activos)</h5>
+                    <div class="h4 fw-bold mb-0">{{ total_productos_distintos }}</div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Fin Fila Estadísticas -->
+
+    
+    <!-- --- NUEVA SECCIÓN: ÓRDENES PENDIENTES --- -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-warning-subtle py-3">
+            <h2 class="h5 mb-0 fw-bold"> <i class="bi bi-clock-history"></i> Órdenes Pendientes por Retirar</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Orden ID</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Hora Retiro</th>
+                            <th scope="col">Productos</th>
+                            <th scope="col">Tipo Pago</th>
+                            <th scope="col" class="text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orden_info in ordenes_pendientes %}
+                        <tr>
+                            <!-- Orden ID -->
+                            <td class="fw-bold">#{{ orden_info.orden.numero_orden }}</td>
+                            
+                            <!-- Cliente -->
+                            <td>{{ orden_info.orden.user_identifier }}</td>
+                            
+                            <!-- Hora Retiro -->
+                            <td class="text-danger fw-bold">{{ orden_info.orden.hora_retiro }}</td>
+                            
+                            <!-- Productos (iteramos la lista de items) -->
+                            <td>
+                                <ul class="list-unstyled mb-0 small">
+                                    {% for item in orden_info.items %}
+                                    <li>{{ item.cantidad }}x {{ item.nombre }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+
+                            <!-- Tipo de Pago -->
+                            <td>
+                                {% if orden_info.tipo_pago == 'Junaeb' %}
+                                <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill">Junaeb</span>
+                                {% else %}
+                                <span class="badge bg-info-subtle text-info-emphasis rounded-pill">Webpay</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Botón "Marcar Entregado" -->
+                            <td class="text-center">
+                                <!-- Este botón es un formulario que enviará los datos a una vista que AÚN NO CREAMOS -->
+                                <form method="POST" action="{% url 'local:marcar_entregado' %}">
+                                    {% csrf_token %}
+                                    <!-- Enviamos el ID de la orden y el TIPO (Junaeb o Webpay) ocultos -->
+                                    <input type="hidden" name="orden_id" value="{{ orden_info.orden.id }}">
+                                    <input type="hidden" name="orden_tipo" value="{{ orden_info.tipo_orden_str }}">
+                                    
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="bi bi-check-lg"></i> Marcar Entregado
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                ¡Genial! No hay órdenes pendientes por retirar.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- --- FIN SECCIÓN ÓRDENES PENDIENTES --- -->
+
+
+    <!-- Sección de Ventas Recientes (Completadas) (Sin cambios) -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3">
+            <h2 class="h5 mb-0 fw-bold"> <i class="bi bi-receipt"></i> Ventas Recientes (Completadas)</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle small">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Orden ID</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Producto Vendido</th>
+                            <th scope="col" class="text-end">Total Item</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items_vendidos %}
+                        <tr>
+                            <td>#{{ item.orden_id }}</td>
+                            <td>{{ item.fecha|date:"d/m/Y H:i" }}</td>
+                            <td>{{ item.nombre }}</td>
+                            <td class="text-end">${{ item.precio_total|floatformat:0 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                Aún no se han registrado ventas completadas para este local.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- FIN SECCIÓN VENTAS RECIENTES -->
+
+    <!-- Sección de Lista de Productos (Sin cambios) -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <h2 class="h5 mb-0 fw-bold">Mis Productos</h2>
+                
+                <form method="GET" action="{% url 'local:panel' %}" class="d-flex gap-2">
+                    <input type="text" name="q" class="form-control form-control-sm" placeholder="Buscar producto..." value="{{ query_actual }}">
+                    <select name="ordenar" class="form-select form-select-sm" style="width: auto;">
+                        <option value="nombre_asc" {% if orden_actual == 'nombre_asc' %}selected{% endif %}>Nombre (A-Z)</option>
+                        <option value="stock_desc" {% if orden_actual == 'stock_desc' %}selected{% endif %}>Mayor Stock</option>
+                        <option value="stock_asc" {% if orden_actual == 'stock_asc' %}selected{% endif %}>Menor Stock</option>
+                        <option value="precio_desc" {% if orden_actual == 'precio_desc' %}selected{% endif %}>Mayor Precio</option>
+                        <option value="precio_asc" {% if orden_actual == 'precio_asc' %}selected{% endif %}>Menor Precio</option>
+                    </select>
+                    <button type="submit" class="btn btn-secondary btn-sm" title="Buscar"><i class="bi bi-search"></i></button>
+                    <a href="{% url 'local:panel' %}" class="btn btn-outline-secondary btn-sm" title="Limpiar filtros"><i class="bi bi-x-lg"></i></a>
+                </form>
+
+                <a href="{% url 'local:producto_crear' %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg"></i> Agregar Producto
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col" class="text-center">Stock</th>
+                            <th scope="col" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if producto.image %}
+                                    <img src="{{ producto.image.url }}" alt="{{ producto.name }}" class="rounded-circle me-3" style="width: 45px; height: 45px; object-fit: cover;">
+                                    {% else %}
+                                    <span class="rounded-circle me-3 bg-light d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                        <i class="bi bi-shop text-muted"></i>
+                                    </span>
+                                    {% endif %}
+                                    <span class="fw-medium">{{ producto.name }}</span>
+                                </div>
+                            </td>
+                            <td>${{ producto.price|intcomma }}</td>
+                            <td class="text-center">
+                                {% if producto.stock > 10 %}
+                                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill">{{ producto.stock }}</span>
+                                {% elif producto.stock > 0 %}
+                                    <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill">{{ producto.stock }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill">Agotado</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'local:producto_editar' pk=producto.pk %}" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="bi bi-pencil-fill"></i> Editar
+                                </a>
+                                <a href="{% url 'local:producto_eliminar' pk=producto.pk %}" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash-fill"></i> Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <p class="mb-0 text-muted">
+                                    {% if query_actual %}
+                                        No se encontraron productos que coincidan con "{{ query_actual }}".
+                                    {% else %}
+                                        No tienes productos registrados en este local.
+                                    {% endif %}
+                                </p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

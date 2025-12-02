@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Cuenta - DuocGo{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center my-5">
+    <div class="card shadow-lg border-0 rounded-4" style="max-width: 600px; width: 100%;">
+        <div class="card-header bg-primary text-white text-center py-4 rounded-top-4" style="background: linear-gradient(45deg, #003366, #0056b3);">
+            <h3 class="fw-bold mb-0"><i class="bi bi-person-plus-fill me-2"></i>Crear Cuenta</h3>
+            <p class="mb-0 opacity-75 small">Únete a la comunidad DuocGo</p>
+        </div>
+        
+        <div class="card-body p-5">
+            
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-muted small">Nombre de Usuario</label>
+                        {{ form.username }}
+                        <div class="form-text small">Será visible para el vendedor.</div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold text-muted small">Correo Institucional</label>
+                        {{ form.email }}
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold text-muted small">RUT</label>
+                        {{ form.rut }}
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-muted small">Soy:</label>
+                        {{ form.tipo_usuario }}
+                    </div>
+
+                    <hr class="my-3 text-muted opacity-25">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-muted small">Contraseña</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-muted small">Confirmar Contraseña</label>
+                        {{ form.password2 }}
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                        Registrarme
+                    </button>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="small text-muted mb-0">¿Ya tienes una cuenta?</p>
+                <a href="{% url 'login' %}" class="fw-bold text-decoration-none">Inicia sesión aquí</a>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="small text-muted mb-1">¿Eres dueño de un local de comida?</p>
+                <a href="{% url 'inscripcion_local' %}" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                    <i class="bi bi-shop me-1"></i> Inscribe tu Local aquí
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

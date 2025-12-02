@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Mis Favoritos - DuocGo{% endblock %}
+{% load formato_chileno %}  
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4 fw-bold"><i class="bi bi-heart-fill text-danger me-2"></i> Mis Favoritos</h2>
+    
+    <div class="row g-4">
+        {% for fav in favoritos %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <a href="{% url 'detalle_producto' fav.origin fav.product_id %}" class="text-decoration-none text-dark">
+                    <img src="{{ fav.product_image }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">{{ fav.product_name }}</h5>
+                    <p class="fw-bold text-primary mb-3">${{ fav.price|clp}}</p>
+                    
+                    <div class="d-grid gap-2">
+                        <button onclick="agregarCarrito('{{ fav.origin }}', '{{ fav.product_id }}')" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-cart-plus"></i> Agregar
+                        </button>
+                        <a href="{% url 'toggle_favorito' fav.origin fav.product_id %}" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Quitar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-heartbreak display-1 text-muted mb-3"></i>
+            <h3 class="text-muted">No tienes favoritos aún</h3>
+            <a href="{% url 'home' %}" class="btn btn-primary mt-3">Ir a explorar</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

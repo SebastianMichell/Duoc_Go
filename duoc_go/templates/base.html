@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DUOC GO{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .mini-cart-scroll { max-height: 300px; overflow-y: auto; }
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        main { flex: 1; }
+        .hover-scale { transition: transform 0.2s; }
+        .hover-scale:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src='/media/logo/Logo_duoc.png' alt="Duoc Go Logo" style="height: 40px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                {% if user.is_authenticated %}
+                    <li class="nav-item me-3">
+                        <span class="navbar-text text-dark">
+                            <i class="bi bi-person-fill me-1"></i> {{ user.username }}
+                            {% if user.tipo_usuario == 'local' %}
+                                <span class="badge bg-primary ms-1">LOCAL</span>
+                            {% endif %}
+                        </span>
+                    </li>
+
+                    {% if user.tipo_usuario != 'local' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'mis_favoritos' %}"> <i class="bi bi-heart-fill fs-5 text-danger"></i><span class="d-lg-none ms-2">Favoritos</span> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'perfil' %}">
+                                <i class="bi bi-person-circle fs-5 text-secondary"></i><span class="d-lg-none ms-2">Perfil</span>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle position-relative" href="#" id="cartDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="updateMiniCart()">
+                                <i class="bi bi-cart-fill fs-5 text-primary"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count" style="font-size: 0.7em;"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end p-3 shadow border-0" aria-labelledby="cartDropdown" style="width: 320px;">
+                                <li><h6 class="dropdown-header fw-bold text-uppercase">Tu Pedido</h6></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <div id="mini-cart-content" class="mini-cart-scroll"><li class="text-center text-muted py-3">Cargando...</li></div>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="fw-bold">Total:</span>
+                                    <span class="fw-bold text-primary fs-5" id="mini-cart-total">$0</span>
+                                </li>
+                                <li><a href="{% url 'carrito' %}" class="btn btn-primary w-100 rounded-pill">Ir a Pagar <i class="bi bi-arrow-right-short"></i></a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if user.tipo_usuario == 'local' %}
+                    <li class="nav-item dropdown ms-lg-3">
+                        <a class="btn btn-primary btn-sm fw-bold px-3 rounded-pill dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-shop me-1"></i> Administración
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                            <li><a class="dropdown-item" href="{% url 'local:panel' %}"><i class="bi bi-speedometer2 me-2"></i> Panel Principal</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'local:configuracion_local' %}"><i class="bi bi-gear me-2"></i> Configurar Tienda</a></li>
+                            <li><a class="dropdown-item" href="{% url 'local:gestion_carrusel' %}"><i class="bi bi-images me-2"></i> Promociones Carrusel</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item ms-2">
+                        <a class="nav-link text-danger" href="{% url 'logout' %}" title="Cerrar Sesión"><i class="bi bi-box-arrow-right fs-5"></i><span class="d-lg-none ms-2">Salir</span></a>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'login' %}">Iniciar Sesión</a></li>
+                    <li class="nav-item ms-2"><a class="btn btn-primary rounded-pill px-4" href="{% url 'registro' %}">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </div> 
+    </div> 
+</nav>
+
+<main class="container my-5">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="text-white text-center py-4 mt-auto" style="background-color: #003366;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-md-start">
+                <p class="mb-0 small opacity-75">© 2025 DUOC GO - Todos los derechos reservados</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                {% if user.tipo_usuario != 'local' %}
+                <a href="{% url 'contacto' %}" class="text-white text-decoration-none fw-bold hover-opacity small">
+                    <i class="bi bi-envelope-fill me-1"></i> Atención al Cliente
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+  <div id="liveToast" class="toast align-items-center text-bg-primary border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body fs-6">
+        <i class="bi bi-info-circle-fill me-2" id="toast-icon"></i>
+        <span id="toast-message">Notificación</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Función para mostrar cualquier mensaje
+    function showToast(message, type = 'success') {
+        const toastEl = document.getElementById('liveToast');
+        const toastBody = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        
+        // Cambiar color según tipo
+        toastEl.className = `toast align-items-center border-0 shadow text-bg-${type}`; // primary, success, danger, warning
+        
+        // Cambiar ícono
+        if (type === 'success') toastIcon.className = 'bi bi-check-circle-fill me-2';
+        else if (type === 'danger') toastIcon.className = 'bi bi-exclamation-triangle-fill me-2';
+        else toastIcon.className = 'bi bi-info-circle-fill me-2';
+
+        toastBody.innerText = message; 
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show(); 
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if messages %}
+            {% for message in messages %}
+                var tag = "{{ message.tags }}";
+                if (tag === 'error') tag = 'danger';
+                showToast("{{ message }}", tag);
+            {% endfor %}
+        {% endif %}
+        
+        // Cargar mini carrito si corresponde
+        updateMiniCart();
+    });
+
+    function agregarCarrito(origen, id) {
+      fetch(`/agregar-carrito/${origen}/${id}/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          showToast(`${data.product_name} agregado al carrito`, 'success');
+          updateMiniCart(); 
+        } else {
+            showToast(data.msg || 'Error al agregar.', 'danger');
+        }
+      })
+      .catch(err => console.error(err));
+    }
+
+    function updateMiniCart() {
+        if (!document.getElementById('cart-count')) return;
+        fetch('/api/carrito-data/')
+        .then(response => response.json())
+        .then(data => {
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) cartCount.innerText = data.total_items > 0 ? data.total_items : '';
+            const totalEl = document.getElementById('mini-cart-total');
+            if (totalEl) totalEl.innerText = '$' + data.total_precio.toLocaleString('es-CL');
+            const container = document.getElementById('mini-cart-content');
+            if (container) {
+                container.innerHTML = ''; 
+                if (data.carrito.length === 0) {
+                    container.innerHTML = '<li class="text-center text-muted py-3"><i class="bi bi-basket3 fs-1 d-block mb-2"></i>Tu carrito está vacío</li>';
+                } else {
+                    data.carrito.forEach(item => {
+                        const html = `
+                        <li class="d-flex align-items-center mb-3">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 text-truncate fw-bold text-dark" style="max-width: 180px;">${item.nombre}</h6>
+                                <small class="text-muted">${item.cantidad} x $${item.precio.toLocaleString('es-CL')}</small>
+                            </div>
+                            <span class="fw-bold text-primary">$${(item.cantidad * item.precio).toLocaleString('es-CL')}</span>
+                        </li>`;
+                        container.innerHTML += html;
+                    });
+                }
+            }
+        })
+        .catch(err => console.error('Error cargando carrito:', err));
+    }
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
